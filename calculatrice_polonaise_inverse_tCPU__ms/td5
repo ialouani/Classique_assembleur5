@@ -1,0 +1,128 @@
+Generation manuelle de code .s => -S.
+Generation automatique => l'objet de ce td.
+EXO1:
+(4+x)*y ->(notation polonaise inverse) 4 x + y * OU:
+        4 x y + * (<=>MEME).///
+->Implementation de l'interpreteur++~_+:>>
+2 variables dans la formule (a,b via le programme)
++chiffres eventuellement
++operations -,*,+.
+(termes separation virgule...)
+=>UTILISATION D'UNE PILE(voir cours structures arborescentes sur les transformations d'expressions infixes vers postfixe ou bien infixes vers prefixe ou bien INVERSEMENT..)
+ ->EN C VIA tableau dont la taille est definie statiquement.
+PROCEDE:
+On empile les valeurs de a et b si *s=='a'||((('b'))) ou bien la constante(si cst.) ""*s"" ou bien *s est un operateur donc on depile les 2 DERNIERES valeurs empilees et on applique l'operation BINAIRE et on ré-empile le resultat.(pas de probleme si ecriture1 respectee;ce qui est le cas.)
+=>exo1.c abrite la fonction execute de type generalise:
+         int (*f)(char*,int,int);; (fonction_exo1=f puis passage de fonction_exo1 (<->222) dans les parametres apres implementation(<###))
+!: initialiser les 100 valeurs a 0;sinon probleme..
+!: default ('chiffre') RETURN code_ascii(int(*s))-48 car en 48 on a '0'
+!: le tableau sera de preference de type int[100].
+!:VOILAA.///()(())
+rq: si faute de syntaxe dans l'expression (on veut faire un calcul suivant une pile vide (~depassement d'indices));ca devrait retourner 0;ce probleme a ete bien gere donc pas la peine et ca evite les conflits avec des resultats vraiment==0.//
+()(())
+***********qst2:
+boucle permettant de faire execute 100000 fois pour des valeurs differentes de a,b(100000 valeurs differentes DONC...) puis calculer le temps d'execution.
+RQ:
+ecrire l'execution dans un fichier: touch file a la fin rm -f file
+puis time a.out > file
+puis COMMENT SELECTIONNER la2ieme/3ieme/4ieme ligne qui sont les plus importantes:
+VARIABLE LINEi: exemple:->:: line1=$(head -n 2 file) selectionne la ligne ou se trouve le 1er temps(c'est pour cela on l'appelle line).(( VARIABLE ))
+Puis Affichage des 3 lignes sur la sortie standard:
+par exemple line3:
+      read -r line3<file (l'entree standard redirigee vers file).
+VOILA.
+(pour un make temps_execution (|--|)   --rq &&&&&  eviter  de calculer depuis un make target (comme execution.. ..) mais appeler un script qui s'en occupe.
+RQ:((rappel)) dans les appels de scripts eviter le while.//
+*******************qst3:
+meme principe: ecriture polonaise inverse des qu'on a deux operandes il faut les suivre d'une operation puis entree2_deuxieme_operation via le prochain element qui forcement suivi par l'operande2 en question.
+Chiffres->generalisation: nombre..
+pour le case 'a','b' reste meme avec tab[N=100] tt au debut.
+!!: default: 'entier' 40 4 puis tour suivant 0..
+=>resolution:
+on compte combien d'avancement pour terminer (chaine uni--2VIDE ou operande ou variable a/b (entier impossible (CONFUSIONS))).
+int compter(char *ss){
+//pointeur vers les VALEURS memes..
+char *s=ss;..;//puis le while sur *s != ce qu'on a dit avant (AJOUT:!!! de *s tout au debut
+{cpt++;s++;}
+return cpt;//==0 au debut(initialisation.//)}
+RQ: on peut pas initialiser (error)  faire des boucles (confusion_compilateuR) dans un default: ..(./(()));donc appel fonction direct (prog. ->FONCTIONNELLE)
+annexe_fct__(!!): fonction power_10(int puissance){
+int a=1; int i=0; while(i<puissance){i++;a*=10;}
+return a;//===a^10}
+PUIS: la fonction qui va retourner tout l'entier decoupe en chiffre reconnus par la fonction qui convertit..:>>>>>>
+int recuperation(int nbr, char* ss){
+int rslt=0;char* s=ss;
+int j=0; while(j<nbr){
+rslt+=power_10(nbr-j-1)*convertir(*s);s++;j++;}
+//return (rslt==0)?*ss:rslt;
+return rslt;
+}
+rq: s++ preferable a s=s+1..///
+puis en fonction execute_avancee:
+annexe_fct2:
+char* avancer(int n, char* s){
+for(int p=0;p<n;p++){s++;}
+return s;}
+default:
+	tab[j++]=recuperation(compter(s),s);avancer(compter(s)-1,s);
+//compter(s)>=1 sinon compter(s)=1 dans le cas dun chiffre (voir particularite 
+// de la fonction) et donc on avance pas(oui../) et
+//tab[j++] devient 10**(1-0-1)==1 * convertir(*s) ce qui vaut bien convertir(*s)
+//dans le cas d'un chiffre donc JUSTE. 
+	break;
+VOILA.
+(gestion des entiers au lieu des chiffres (+->generalisation && conservation du meme type de mise en ecriture POLONAISE INVERSE(memes principes bien sur)).
+RESULTATS:
+Le temps ne varie pas (chiffres/entiers normal) entre le make temps_execution et time(./calculatrice_polonaise_inverse) ..
+time d'un executable binaire:
+DIVISION EN TROIS:
+real/user/sys 
+real: temps reel pour faire la tache dependamment de fournir le resultat, updater l'affichage au cas ou(avec un grep par exemple sur la ligne de time ./a.out pour recuperer quelque chose..) ~temps global.
+user: comme real mais relatif au point final de resultat connu independamment des dependances dont depend le real.
+sys: le temps de gestion des dependances de real.
+En general, on pourrait se dire que: real=sys+user mais c'est faux;en general ON A LA RELATION SUIVANTE: real>user+sys car sys->0 parfois (optimisations) alors que real dans le fond reste le meme car englobe tout c'est pour cela pour une vision limitee, le temps real qui sera considere pour evaluer la vitesse/valeur du temps d'execution en secondes NOW d'un executable derive d'un fichier C par exemple (relatif au passage par le main(pas etapes de compilation AUSSI)).
+rq: le temps trouve pour 100000 executions differentes est ~60 ms ce qui <1s donc rapide.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
