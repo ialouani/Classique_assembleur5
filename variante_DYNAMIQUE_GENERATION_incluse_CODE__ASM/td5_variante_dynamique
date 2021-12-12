@@ -1,0 +1,131 @@
+EXO3:
+BUT: compiler(appel a la fonction)
++execution dans le meme fichier .c ...
+
+ETAPES A COMPRENDRE ET A RETENIR:
+APRES compile(s(==argv[1])   ) ; on voudrait que la fonction amene pas seulement a la creation de calcule.s mais aussi a sa compilation,donc on inclut un header externe: <dflcn.h> puis on ajoute la ligne de compilation dans system via:
+system("yasm -felf64 calcule.s")
+PUIS on va generer une bibliotheque dynamique .so a partir de cet executable calcule.o : gcc -shared -o calcule.so calcule.o (normalement:
+     gcc -fPIC -c file.c
+     gcc -shared -o libnom.so file.o 
+     et a.o pour terminer compilation necessite edition de lien
+ (resolution de symboles undefined dans nm a.o (objdump -t a.o))
+     PUIS l'UTILISATION se fera par: gcc a.o -lnom
+ =>en cas de symbole resolu un lien sera cree vers libnom.so pour que l'executable en tient compte)
+celui-la est un fichier .s donc -c non.
+=>directement: yasm -felf64 calcule.s et non pas yasm -felf64 -fPIC -c calcule.s
+=>dans tous les cas: calcule.o sera possible d'etre representateur unique d'une future bibliotheque dynamique (dynamique car creation avec execution pas fichier .o statique).
+Pour un file.c en file.o avec gcc -fPIC -c ; pour en creer une, on fera:
+gcc -shared -o libnom.so file.o
+ici on voudrait en creer une contenant calcule.o et la charger immediatement dans la session courante pour en prendre compte lors de la compilation du fichier exo2.c (le nouveau(floders..///)) ; cela se fera par:
+gcc -shared -o calcule.so calcule.o -ldl (nom direct sans prefixe lib + -ldl a la fin pour charger celle-ci dans la session courante..(ca va se voir apres..))
+donc ajout dans compile(s):
+system("gcc -shared -o calcule.so calcule.o -ldl");
+En gros les 2 etapes suivantes permettent de compiler le fichier .s (calcule.s) et d'en faire une bibliotheque qui sera ici dynamique VIA:
+->yasm -felf64 calcule.s.
+->gcc -shared -o calcule.so calcule.o -ldl.(bout de code qui pourra etre charge a l'execution en compilant avec l'"option" -ldl)
+apres dans le main apres avoir fait compile(s), on dispose d'un fichier calcule.o et d'une biblio dynamic. calcule.so pour charger la biblio apres, il faut une fonction void* load() qui fera ceci:
+void* lib=dlopen("./calcule.so",RTLD_LAZY);
+calcule=dlsymb(lib,"calcule");
+return lib;
+ainsi load() va recuperer le symbole calcule depuis la biblitheque dynamique donc apres si on fait un test calcule(3,5) en compilant avec l'option -ldl ca va marcher.
+REMARQUE: creer calcule.so en compilant avec -ldl n'est pas necessaire cela voudrait dire que calcule.so a besoin pour se creer de la biblio deja fournie dl => calcule.o aussi ce qui est pas tout a fait vrai.
+ *pas necessaire((()))*
+REPRISE CONSCICE:
+La fonction compile va creer comme avant le calcule.s mais la difference ici c'est que cette derniere va le compiler puis en creer une bibliotheque dynamique (pour que dans le main on fait appel a des fonctions qui permettront apres compile(s) de tester la fonction par recuperation du symbole representant la fonction dans l'assembleur..///)
+FORMALISATION:*********************
+Pour tout faire dans un fichier, apres compile(s) il faut recuperer la fonction evalExpr dans calcule.s pour cela on part trop loin on laisse compile(s) compiler le fichier resultant avant calcule.s:
+->system("yasm -felf64 calcule.s");//#include<dlfcn.h>
+avec cela on a apres compile(s) calcule.o mais on peut pas faire un test sur sa fonction.. On doit utiliser des fonctions deja predefinies qui permettent de recuperer le symbole mais depuis b.D seulement => transfo en ceci depuis compile(s)=>ajout de system("gcc -shared -o calcule.so calcule.o" syntaxe pour des fichiers .o derives de fichiers assembleurs(pas de -c/<-fPIC..)////.
+donc avec ceci, compile(s) dans le main(void) cree la biblio dynamique calcule.so abritant le symbole dont on a besoin. Pour le recuperer c'est facile, il suffit d'implementer le fonction void* load() qui va ouvrir calcule.so et recuperer le symbole dont on a besoin via affectation avec un pointeur de fonction (generiquE) defini en global:
+ET PUIS retourner lib (void*(polymorphe --&)) pour que ca soit utilise dans unload qui ferme la bibliotheque c'est pour ca , on a besoin d'un retour.
+on declare un pointeur en asm: (generique a celui de la fonction recherchee)
+         int (*calcule)(int,int);
+puis void* load() qui fera CECI:
+void* lib=dlopen("./calcule.so",RTLD_LAZY);
+calcule=dlsymb("evalExpr");
+return lib;}
+dans le main apres compile(s) on tape: load() ca va up-dater calcule qui deviendra evalExpr definie dans calcule.s don apres reste qu'à tester calcule(3,5) par exemple qui avec 4a+b* retournera 35 ; et pour executer (n'oubliez pas de compiler le fichier new__ EXO 2.c avec -ldl pour reconnaitre les ss-fcts:: dlopen/dlsymb..) on tape tout simple: gcc -std=c99 exo2.c -ldl ; voilà.
+REMARQUE(): gcc avec -ldl pour creation de calcule.so est pas necessaire dans ce cas.
+CE MODE DE GENERATION DE CODE est qualifié de dynamique(a chaque execution pas statique .//)
+FIN_FORMALISATION__:::EXPLICATION_DETAILLEE_FINALE2.///
+QST3 pour finir cet exo:
+boucle a++;b++ len-1 fois puis time ..(tout en 1seul_LIGNE):
+=>temps reduit de moitie environ ::
+car le temps pour compiler en un language machine est partiellement realise en tout via un calcul de temps moindre (compile est simple par rapport au compilateur gcc -S <gcc et inclut dedans) + execution du fichier assembleur se fait directement en recuperant le symbole via un pointeur au lieu de relire tout le binaire associe a un autre .c (chargement dynamique) un lien est cree mais l'objet n'est pas entierement inclus donc moins de details ;  tout cela explique fortement prq t=t/2 maintenant.
+FIN EXO2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
