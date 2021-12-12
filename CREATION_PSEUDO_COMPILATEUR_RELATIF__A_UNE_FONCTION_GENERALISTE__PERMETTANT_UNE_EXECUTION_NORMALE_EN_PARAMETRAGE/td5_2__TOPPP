@@ -1,0 +1,62 @@
+EXO2: Generateur non manuelle mais automatique de CODE ASM
+PRINCIPE:
+code.c =>(en execution suivant LE MAIN):: creation d'un fichier .s (eventuellement de meme nom) comportant la traduction de ce que fera la fonction evalExpr_plus mais en assembleur.
+~Compilateur(car depuis un .c et une execution on fera un .s avec lexecution direct A TESTER avec..(un autre .c))
+BUT:
+..
+qst1: facile.
+qst2:
+void compile(char* s) permet de batir le fichier .s correspondant a la traduction de ce que fera le language asm pour traiter la chaine s en entier afin de l'evaluer. Ainsi compile(ss) dans le main creera le fichier assembleur qui permet de voir dedans l'implementation de la fonction evalExpr comme on aurait pu faire directement avec ce language.
+RQ: fprintf(f,"%d\n",rsi) possible la 2ieme partie ~printf[0..|_LIM].
+rq2: fclose(f) tjrs a la fin.
+rq 3 :   pas de a et b en parametres de compile.
+=>retour qst2:
+-->>>BUT::: creer une fonction C compile qui permet depuis un char* generer le code assembleur relatif a la fonction pour evalExpr de ce STR.
+=>au lieu d'avoir la fonction C on genere depuis l'execution d'un fichier.c le fichier .s qui implemente cette fonction directement
+=>PREMIER MODELE DE COMPILATEUR PARAMETRE EN 2 FOIS(fct/EXPR a evaluer()). ...
+qst3:*************
+test avec calcule.c qui appele le fichier genere calcule.s a l'aide d'exo2.c en execution (gcc puis a.out) => ca marche.
+RESUME CONSCIS EXO2:**formalisation+details d'approfondissement**::
+compile(s) permet de creer le code assembleur qui represente la fonction evalExpr (~COMPILATEUR) en executant le fichier qui cree calcule.s (passer en parametre l'EXPR+++) puis de tester avec des valeurs aleatoires(chiffres) avec calcule.c.
+=>Dans le Makefile:
+make lance l'execution (test sur une expression quelconque avec des chiffres a et b (2 parametres autorises) quelconques):
+->fait appel a test1 qui compile normalement mais fait appel a calcule.o qui fait appel a calcule.s et generateur_compilateur_level1 en PREMIER ; ce dernier execute un script dans lequel l'expression est demandee (ce script compile le fichier exo2.c en compilateur_level0 puis l'execute suivant l'expression (lire expression + bcp dependances vis a vis de celle-ci => dans le meme script..///) tapée ; cela se fait par:
+echo "Entrez l'expr. :  "
+read -r expression
+puis execute via: ./compilateur_level0 $expression =>calcule.s cree
+donc calcule.o qui depend de l'execution du script et de calcule.s compilera le calcule.s qui (retour..///) suivant test1 compilera l'ensemble (avec le calcule.c de TEST) puis avec exo3.sh on dispose jusqu'à maintenant de test1 il suffit de faire ./test1 param1 .. cela se fera de la meme facon que precedemment echo puis read -r a/b puis ./test1 $a $b ainsi make all permet d'entrer l'expression puis a et b a evaluer et tester si ca marche suivant le fichier pseudo_COMPILE.
+(fichier resultant de l'execution d'un autre fichier.c).
+->Les languages interpretees comme Python ou dont l'execution est independande de la plateforme(JAVA) utilisent ce principe . ...
+RQ: le general avec les entiers se fait de la meme facon;vu que ca ete fait avant et que ceci n'entraine pas des difficultes (independants de la nature chiffre/nombre) ; cela ne va pas etre fait dans le 2ieme repertoire de notre repisotory Classique_assembleur5.
+FIN EXO2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
